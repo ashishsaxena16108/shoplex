@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { Toast } from 'primereact/toast';
 import ToastContext from './context/ToastContext';
 import { setCart } from './feature/cart/cartSlice'
-import { setRole } from './feature/auth/authSlice'
+import { setRole,login } from './feature/auth/authSlice'
 const App = ({ }) => {
   const dispatch = useDispatch()
   const { cart } = useSelector((state) => state.cart)
@@ -15,8 +15,21 @@ const App = ({ }) => {
   useEffect(() => {
     let token = localStorage.getItem('token');
     if(token){
-       
+      const decodeToken = (token) => JSON.parse(atob(token.split('.')[1]));
+      const isTokenExpired = (token) => decodeToken(token).exp * 1000 < Date.now();
+      if(!isTokenExpired(token)){
+        fetch('http://localhost:8080/shoplex/auth/verifyToken',{method:'GET',
+          body:token
+        })
+        .then(res=>res.json())
+        .then(data=>{
+          if(data.error){}
+          else{
+            dispatch(login({role:data.user.role,user:data.user}))
+          }
+        })
     }
+  }
   }, [])
   
   useEffect(() => {

@@ -76,16 +76,6 @@ public class CustomerController {
       m.put("error", "Payment Id creation failed");
       return ResponseEntity.badRequest().body(m);
   }
-  @GetMapping("/verifyToken")
-  public ResponseEntity<Map<String,Object>> getProfile(@RequestBody String token) {
-      Map<String,Object> m = new HashMap<>();
-      User user = customerService.getProfile(token);
-      if(user==null){
-        m.put("error", "User not found");
-        return ResponseEntity.badRequest().body(m);
-      }
-      m.put("user", user);
-      return ResponseEntity.ok(m);
-  }
+  
   
 }

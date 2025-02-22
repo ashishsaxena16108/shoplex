@@ -30,8 +30,6 @@ import com.shoplex.shopex_backend.Util.JwtUtil;
 @Service
 public class CustomerService {
     @Autowired
-    private JwtUtil jwtUtil;
-    @Autowired
     private UserRepository userRepository;
     @Autowired
     private ProductRepository productRepository;
@@ -55,11 +53,6 @@ public class CustomerService {
             }
         return userRepository.save(existingUser) != null ? 1 : 0;
 
-    }
-    public User getProfile(String token){
-        
-        String username = jwtUtil.extractUsername(token);
-        return userRepository.findByEmail(username);
     }
     public int saveCart(ShoppingCart cart,String username){
        User user = userRepository.findByEmail(username);
