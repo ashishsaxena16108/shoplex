@@ -3,6 +3,7 @@ package com.shoplex.shopex_backend.Service;
 import java.util.Map;
 
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.razorpay.Customer;
@@ -13,8 +14,10 @@ import com.razorpay.RazorpayException;
 
 @Service
 public class PaymentService {
-    private String key_id = "rzp_test_wLaYh8MVlCJXGc";
-    private String key_secret = "WfRyIx7qJH9UYU1n1nW0pmj9";
+    @Value("${razorpay.key_id}")
+    private String key_id;
+    @Value("${razorpay.key_secret}")
+    private String key_secret;
 
     public String getPayment(Integer amount) throws RazorpayException {
         RazorpayClient razorpayClient = new RazorpayClient(key_id, key_secret);

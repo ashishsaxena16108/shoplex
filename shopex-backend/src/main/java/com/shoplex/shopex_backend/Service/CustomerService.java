@@ -115,25 +115,25 @@ public class CustomerService {
             payment.setVendor(vendor);
         }
     }
-    @Scheduled(fixedRate = 1200000)
-    public void givePayments(){
-        List<Payment> pendingPayments = paymentRepository.findByPaymentStatus(PaymentStatus.PENDING);
-        for (Payment payment : pendingPayments) {
-            try {
-                Map<String,Object> map = new HashMap<>();
-                map.put("amount",payment.getAmount());
-                map.put("vendor_name",payment.getVendor().getFirstName()+" "+payment.getVendor().getLastName());
-                map.put("vendor_email",payment.getVendor().getEmail());
-                map.put("vendor_phone", payment.getVendor().getPhoneNumber());
-                paymentService.sendPayment(map);
+    // @Scheduled(fixedRate = 1200000)
+    // public void givePayments(){
+    //     List<Payment> pendingPayments = paymentRepository.findByPaymentStatus(PaymentStatus.PENDING);
+    //     for (Payment payment : pendingPayments) {
+    //         try {
+    //             Map<String,Object> map = new HashMap<>();
+    //             map.put("amount",payment.getAmount());
+    //             map.put("vendor_name",payment.getVendor().getFirstName()+" "+payment.getVendor().getLastName());
+    //             map.put("vendor_email",payment.getVendor().getEmail());
+    //             map.put("vendor_phone", payment.getVendor().getPhoneNumber());
+    //             paymentService.sendPayment(map);
 
-                // Update payment status to COMPLETED
-                payment.setPaymentStatus(Payment.PaymentStatus.COMPLETED);
-                paymentRepository.save(payment);
-            } catch (Exception e) {
-                // Handle payment failure
-                e.printStackTrace();
-            }
-        }
-    }
+    //             // Update payment status to COMPLETED
+    //             payment.setPaymentStatus(Payment.PaymentStatus.COMPLETED);
+    //             paymentRepository.save(payment);
+    //         } catch (Exception e) {
+    //             // Handle payment failure
+    //             e.printStackTrace();
+    //         }
+    //     }
+    // }
 }

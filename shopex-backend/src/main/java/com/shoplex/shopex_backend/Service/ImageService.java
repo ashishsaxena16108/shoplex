@@ -9,16 +9,24 @@ import org.springframework.web.multipart.MultipartFile;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 
+import org.springframework.beans.factory.annotation.Value;
+
 
 @Service
 public class ImageService {
     private Cloudinary cloudinary;
-
+    @Value("${cloudinary.cloud_name}")
+    private String cloudName;
+    @Value("${cloudinary.api_key}")
+        private String keyId;
+    @Value("${cloudinary.api_secret}")
+    private String secret;
     public ImageService() {
+        
         cloudinary = new Cloudinary(ObjectUtils.asMap(
-            "cloud_name", "dfbbkoru4",
-            "api_key", "254537928382317",
-            "api_secret", "MFhH2opvklNSmSzG-XH-zEVoG8w"));
+            "cloud_name", cloudName,
+            "api_key", keyId,
+            "api_secret", secret));
                         }
    public String uploadImage(MultipartFile file) throws IOException {
         Map uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap());
