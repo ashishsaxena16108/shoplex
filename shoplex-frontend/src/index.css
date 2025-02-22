@@ -1,0 +1,5 @@
+@import 'primereact/resources/themes/lara-light-blue/theme.css' layer(primereact);
+@import "tailwindcss";
+body{
+    background-color: #f3f4f6;
+}
