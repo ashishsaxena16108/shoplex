@@ -90,9 +90,10 @@ To run the project locally, you will need to have the following installed:
 </ul>
 <h2>Project Usage</h2>
 To start the project, first clone the repository and then navigate to the project directory. Then, run the following commands:
-```powershell
+```ps
 cd online-delivery-project
 mvn spring-boot:run
 cd frontend
 npm install
 npm start
+```
