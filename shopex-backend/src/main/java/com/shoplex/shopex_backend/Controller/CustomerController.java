@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.razorpay.RazorpayException;
 import com.shoplex.shopex_backend.Entities.Order;
 import com.shoplex.shopex_backend.Entities.ShoppingCart;
+import com.shoplex.shopex_backend.Entities.User;
 import com.shoplex.shopex_backend.Entities.Wishlist;
 import com.shoplex.shopex_backend.Service.CustomerService;
 
@@ -75,4 +76,16 @@ public class CustomerController {
       m.put("error", "Payment Id creation failed");
       return ResponseEntity.badRequest().body(m);
   }
+  @GetMapping("/verifyToken")
+  public ResponseEntity<Map<String,Object>> getProfile(@RequestBody String token) {
+      Map<String,Object> m = new HashMap<>();
+      User user = customerService.getProfile(token);
+      if(user==null){
+        m.put("error", "User not found");
+        return ResponseEntity.badRequest().body(m);
+      }
+      m.put("user", user);
+      return ResponseEntity.ok(m);
+  }
+  
 }

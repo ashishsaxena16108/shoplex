@@ -25,9 +25,12 @@ import com.shoplex.shopex_backend.Entities.Payment.PaymentStatus;
 import com.shoplex.shopex_backend.Repositories.PaymentRepository;
 import com.shoplex.shopex_backend.Repositories.ProductRepository;
 import com.shoplex.shopex_backend.Repositories.UserRepository;
+import com.shoplex.shopex_backend.Util.JwtUtil;
 
 @Service
 public class CustomerService {
+    @Autowired
+    private JwtUtil jwtUtil;
     @Autowired
     private UserRepository userRepository;
     @Autowired
@@ -52,6 +55,11 @@ public class CustomerService {
             }
         return userRepository.save(existingUser) != null ? 1 : 0;
 
+    }
+    public User getProfile(String token){
+        
+        String username = jwtUtil.extractUsername(token);
+        return userRepository.findByEmail(username);
     }
     public int saveCart(ShoppingCart cart,String username){
        User user = userRepository.findByEmail(username);
