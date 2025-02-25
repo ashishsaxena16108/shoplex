@@ -39,7 +39,6 @@ const Main = () => {
   const edit = (product) =>{
     return <button className='p-2 bg-gradient-to-r from-green-500 via-blue-400 to-cyan-400 rounded-lg text-white w-14 cursor-pointer hover:scale-110' onClick={()=>{
       setOpenForm(true)
-      console.log(product)
       setProduct(product)
     }}>Edit</button>
   }

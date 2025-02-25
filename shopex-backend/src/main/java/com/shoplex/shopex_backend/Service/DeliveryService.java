@@ -48,6 +48,14 @@ public class DeliveryService {
          }
          return -1;
      }
+     public int markOrderShipping(Long orderId) {
+         Optional<Order> order = orderRepository.findById(orderId);
+         if (order.isPresent()) {
+             order.get().setOrderStatus(Order.OrderStatus.SHIPPING);
+             return orderRepository.save(order.get())==null?0:1;
+         }
+         return -1;
+     }
      public int markOrderOutForDelivery(Long orderId) {
          Optional<Order> order = orderRepository.findById(orderId);
          if (order.isPresent()) {

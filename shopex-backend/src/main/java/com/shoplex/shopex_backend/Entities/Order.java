@@ -50,6 +50,6 @@ public class Order {
     private User deliveryAgent;
     private LocalDateTime createdAt = LocalDateTime.now();
     public enum OrderStatus {
-        PLACED,PROCESSING, SHIPPING, OUT_FOR_DELIVERY, DELIVERED, CANCELED
+        PLACED,PROCESSING, SHIPPING, OUT_FOR_DELIVERY, DELIVERED, CANCELLED
     }
 }

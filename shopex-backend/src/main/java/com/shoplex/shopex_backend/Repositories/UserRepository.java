@@ -1,5 +1,6 @@
 package com.shoplex.shopex_backend.Repositories;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,4 +16,6 @@ public interface UserRepository extends JpaRepository<User,Long> {
     
     @Query("SELECT u FROM users u WHERE u.role = 'DELIVERY_AGENT' AND u.isAvailable = true")
     Optional<User> findFirstByIsAvailableTrue();
+
+    List<User> findAllByRole(String role);
 }

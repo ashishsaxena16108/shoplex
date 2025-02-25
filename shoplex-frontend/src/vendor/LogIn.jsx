@@ -10,14 +10,24 @@ const LogIn = ({role}) => {
     if(role === 'ADMIN'){
         fetch('http://localhost:8080/shoplex/auth/signin/admin', { method: 'POST',body: JSON.stringify(data) ,headers: { 'Content-Type': 'application/json'}})
         .then(res => {
-            console.log(res.text())
-            localStorage.setItem('token',res.text())
-            navigate('/home')
+            if(res.error){
+                alert(res.error)
+            }
+            else{
+              localStorage.setItem('token',res.token)
+              dispatch(login({role:'ADMIN',user:res.user}))
+              navigate('/home')
+            }
+            
         })
     }
     else{
         const res = await fetch('http://localhost:8080/shoplex/auth/signin/user', { method: 'POST',body: JSON.stringify(data),headers: { 'Content-Type': 'application/json'}})
         const resp = await res.json()
+          if(resp.error){
+            alert(resp.error)
+          }
+          else{
           localStorage.setItem('token',resp.token)
           if(resp.user.role==='VENDOR'){
             dispatch(login({role:'VENDOR',user:resp.user}))
@@ -31,6 +41,7 @@ const LogIn = ({role}) => {
             dispatch(login({role:'USER',user:resp.user}))
             navigate('/')
           }
+        }
     }
   }
   function handleForm(e){

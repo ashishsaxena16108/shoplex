@@ -2,12 +2,10 @@ import React,{ useState,useEffect,useContext } from 'react'
 import Nav from './Nav'
 import { useParams,useNavigate } from 'react-router'
 import { useDispatch } from 'react-redux'
+import { toast } from 'react-toastify'
 import { addToCart } from '../feature/cart/cartSlice'
-import ToastContext from '../context/ToastContext'
-import { summary } from 'framer-motion/client'
 const Product = () => {
  const { pid } = useParams()   
- const toastRef = useContext(ToastContext);
  const navigate = useNavigate()
  const dispatch = useDispatch()
  const [product, setproduct] = useState({})
@@ -15,7 +13,17 @@ const Product = () => {
  const handleAddToCartBtn = (vp)=>{
     vp={...vp,product}
     dispatch(addToCart({vendorProduct:vp,quantity:1}))
-    toastRef.current.show({ severity: 'success',summary:'Added To Cart', detail: 'Added To Cart'});
+    toast.success('Added To Cart', {
+      position: "top-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: false,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+      transition: Bounce,
+      });
     navigate('/')
  }
   useEffect(() => {
@@ -84,13 +92,29 @@ const Product = () => {
             </div>
         })}
       </section>
-      <section>
-        <h1 className='text-5xl font-extrabold'>Reviews & Ratings</h1>
+      <section className='flex flex-row justify-between w-3/5'>
+      <div className='flex flex-row gap-7'>
+       <div>
+        <h1 className='text-5xl font-extrabold'>Customer reviews</h1>
+        <h1>{[...Array(5).map((_,index)=>{
+           if(index<product.avgRating)
+             return <i>★</i>
+           else
+             return <i>☆</i>
+        }
+        )]}</h1>
+        <div><button className='text-2xl rounded-xl border-4 font-semibold bg-gray-200 border-black p-2 m-7'>Write a product review</button></div>
+        </div>
+        <div className='w-0.5 bg-black'></div>
+      </div>
+      <div>
+        <h1 className='text-5xl font-extrabold flex justify-between'><span>Reviews & Ratings</span></h1>
         {product.reviewsAndRatings>0?
         product.reviewsAndRatings.map((rar)=>{
           return <div></div>
         })
         :<h1 className='text-4xl m-8 text-gray-500'>Be the first one to review</h1>}
+      </div>
       </section>
       </div>
     </div>

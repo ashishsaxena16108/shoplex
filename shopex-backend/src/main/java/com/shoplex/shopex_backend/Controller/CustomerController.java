@@ -16,7 +16,6 @@ import org.springframework.web.multipart.MultipartFile;
 import com.razorpay.RazorpayException;
 import com.shoplex.shopex_backend.Entities.Order;
 import com.shoplex.shopex_backend.Entities.ShoppingCart;
-import com.shoplex.shopex_backend.Entities.User;
 import com.shoplex.shopex_backend.Entities.Wishlist;
 import com.shoplex.shopex_backend.Service.CustomerService;
 
@@ -66,7 +65,6 @@ public class CustomerController {
   }
   @PostMapping("/placeOrder")
   public ResponseEntity<Map<String,String>> placeOrder(@RequestBody Order order,Principal principal) throws RazorpayException {
-      System.out.println(order.toString());
       String result = customerService.placeOrder(order,principal.getName());
       Map<String,String> m = new HashMap<>();
       if(result!=null){
@@ -75,6 +73,12 @@ public class CustomerController {
       }
       m.put("error", "Payment Id creation failed");
       return ResponseEntity.badRequest().body(m);
+  }
+  @PostMapping("/cancelOrder")
+  public ResponseEntity<String> cancelOrder(@RequestParam Long orderId,Principal principal) {
+      
+      
+      return ResponseEntity.ok(customerService.cancelOrder(orderId,principal.getName()));
   }
   
   

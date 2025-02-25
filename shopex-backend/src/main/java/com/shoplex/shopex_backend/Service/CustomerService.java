@@ -2,12 +2,10 @@ package com.shoplex.shopex_backend.Service;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -21,11 +19,9 @@ import com.shoplex.shopex_backend.Entities.ShoppingCart;
 import com.shoplex.shopex_backend.Entities.User;
 import com.shoplex.shopex_backend.Entities.Wishlist;
 import com.shoplex.shopex_backend.Entities.Order.OrderStatus;
-import com.shoplex.shopex_backend.Entities.Payment.PaymentStatus;
 import com.shoplex.shopex_backend.Repositories.PaymentRepository;
 import com.shoplex.shopex_backend.Repositories.ProductRepository;
 import com.shoplex.shopex_backend.Repositories.UserRepository;
-import com.shoplex.shopex_backend.Util.JwtUtil;
 
 @Service
 public class CustomerService {
@@ -77,8 +73,7 @@ public class CustomerService {
         User user = userRepository.findByEmail(username);
         user.getOrders().add(order);
         order.setUser(user);
-        
-        String orderId = paymentService.getPayment(new Double(order.getTotalAmount()*100).intValue());
+        String orderId = paymentService.getPayment(Double.valueOf(order.getTotalAmount()*100).intValue());
         order.setOrderStatus(OrderStatus.PLACED);
         userRepository.save(user);
         savePaymentsToVendors(order);
@@ -115,6 +110,15 @@ public class CustomerService {
             payment.setAmount(amount);
             payment.setVendor(vendor);
         }
+    }
+    public String cancelOrder(Long orderId,String username){
+        User user = userRepository.findByEmail(username);
+        Order order = user.getOrders().stream().filter(o->o.getId()==orderId).findFirst().orElse(null);
+        if(order==null)
+            return "Order not found";
+        order.setOrderStatus(Order.OrderStatus.CANCELLED);
+        userRepository.save(user);
+        return "Order cancelled successfully";
     }
     // @Scheduled(fixedRate = 1200000)
     // public void givePayments(){

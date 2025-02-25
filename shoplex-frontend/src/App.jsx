@@ -1,24 +1,22 @@
-import React, { useEffect,useRef } from 'react'
+import React, { useEffect,useRef,useState } from 'react'
 import Nav from './components/Nav'
 import { Outlet, RouterProvider, useFetcher, useLocation } from 'react-router'
 import { useDispatch, useSelector } from 'react-redux'
-import { Toast } from 'primereact/toast';
-import ToastContext from './context/ToastContext';
 import { setCart } from './feature/cart/cartSlice'
 import { setRole,login } from './feature/auth/authSlice'
+import { ToastContainer,toast } from 'react-toastify';
 const App = ({ }) => {
   const dispatch = useDispatch()
   const { cart } = useSelector((state) => state.cart)
   const { loggedIn } = useSelector((state)=>state.auth)
   const location = useLocation()
-  const toast = useRef(null);
   useEffect(() => {
     let token = localStorage.getItem('token');
     if(token){
       const decodeToken = (token) => JSON.parse(atob(token.split('.')[1]));
       const isTokenExpired = (token) => decodeToken(token).exp * 1000 < Date.now();
       if(!isTokenExpired(token)){
-        fetch('http://localhost:8080/shoplex/auth/verifyToken',{method:'GET',
+        fetch('http://localhost:8080/shoplex/auth/verifyToken',{method:'POST',
           body:token
         })
         .then(res=>res.json())
@@ -71,10 +69,8 @@ const App = ({ }) => {
   return (
     <div>
       <Nav />
-      <Toast ref={toast} className='scale-125 mr-7'/>
-      <ToastContext.Provider value={toast}>
+      <ToastContainer/>
       <Outlet />
-      </ToastContext.Provider>
     </div>
   )
 }

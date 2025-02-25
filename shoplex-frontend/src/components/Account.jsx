@@ -25,6 +25,9 @@ const Account = () => {
       }
     }).then(res => res.json())
       .then(data => { setwishlist(data) });
+    setorders(user.orders)
+    console.log(user)
+    console.log(user.orders)
   }, [])
   const editProfile=(editForm)=>{
      fetch('http://localhost:8080/shoplex/customer/updateProfile',{method:'POST',
@@ -38,6 +41,7 @@ const Account = () => {
         let form = e.target;
         let formData = new FormData(form);
         let file = formData.get('profileImageUrl');
+        formData.delete('profileImageUrl');
         let data = Object.fromEntries(formData.entries());
         let editForm = new FormData();
         editForm.append('file',file);
@@ -61,17 +65,40 @@ const Account = () => {
     let list = items.map((product, index) => {
       return itemTemplate(product, index);
     })
-    return <div className="grid grid-nogutter">{list}</div>;
+    return <div className="grid grid-nogutter gap-4">{list}</div>;
+  }
+  const orderItemlistTemplate = (products) =>{
+      if(!products || products.length === 0) return null;
+      let list = products.map((orderitem,index)=>{
+        let product = orderitem.vendorProduct.product;
+        return <div key={product.id} className='w-1/2 m-7 bg-transparent'>
+          <div className="product flex gap-12 w-full justify-around bg-gray-200 p-3 rounded-lg">
+            <img className="rounded-lg" src={product.imageUrl} width="200" alt="" />
+          </div>
+        </div>
+      })
+      return <div className="grid grid-nogutter gap-4 bg-gray-200">{list}</div>;
   }
   const orderTemplate = (order, index) => {
-    return <div></div>
+    return <div className="product flex gap-12 w-full bg-gray-200 p-3 rounded-lg">
+      <div className='flex flex-col gap-5 m-3'>
+        <h1 className='text-2xl'>Order Id: {order.id}</h1>
+        <h1 className='text-2xl'>Order Date: {order.createdAt.split('T')[0]}</h1>
+        <h1 className='text-2xl'>Order Status:<span className=' bg-blue-500 rounded-xl p-2 m-2 text-white'>{order.orderStatus}</span></h1>
+        <h1 className='text-2xl'>Total Price: {new Intl.NumberFormat('hi-IN', { style: 'currency', currency: 'INR' }).format(order.totalAmount)}</h1>
+      </div>
+      <div>
+      <h1 className='text-3xl'>Order Items:</h1>
+        <DataView value={order.orderItems} listTemplate={orderItemlistTemplate}/>
+    </div>
+    </div>
   }
   const orderlistTemplate = (orders) => {
     if (!orders || orders.length === 0) return null;
     let list = orders.map((order, index) => {
       return orderTemplate(order, index);
     })
-    return <div className="grid grid-nogutter">{list}</div>;
+    return <div className="grid grid-nogutter gap-4 m-3">{list}</div>;
   }
   return (
     <div>
@@ -89,16 +116,16 @@ const Account = () => {
         <div className='flex flex-row mt-8 max-[650px]:flex-col'>
         <div>
         <div className="form-group">
-            <input type="text" id="firstname" name="firstName" className='border-2 rounded-lg m-2 p-2' placeholder='First Name' />
+            <input type="text" id="firstname" name="firstName" className='border-2 rounded-lg m-2 p-2' placeholder='First Name' value={user.firstName}/>
           </div>
           <div className="form-group">
-            <input type="text" id="lastname" name="lastName" className='border-2 rounded-lg m-2 p-2' placeholder='Last Name' />
+            <input type="text" id="lastname" name="lastName" className='border-2 rounded-lg m-2 p-2' placeholder='Last Name' value={user.lastName}/>
           </div>
           <div className="form-group">
-            <input type="number" id="number" name="phoneNumber" className='border-2 rounded-lg m-2 p-2' placeholder='Phone Number' />
+            <input type="number" id="number" name="phoneNumber" className='border-2 rounded-lg m-2 p-2' placeholder='Phone Number' value={user.phoneNumber}/>
           </div>
           <div className="form-group">
-            <input type="text" id="address" name="address" className='border-2 rounded-lg m-2 p-2' placeholder='Address' />
+            <input type="text" id="address" name="address" className='border-2 rounded-lg m-2 p-2' placeholder='Address' value={user.address} />
           </div>
           <div className="form-group">
             <input type='file' id="profileImage" name="profileImageUrl" className='border-2 rounded-lg m-2 p-2'  />
@@ -106,7 +133,7 @@ const Account = () => {
           </div>
           <div>
           <div className="form-group">
-            <input type="email" id="email" name="email" className='border-2 rounded-lg m-2 p-2' placeholder='Email' />
+            <input type="email" id="email" name="email" className='border-2 rounded-lg m-2 p-2' placeholder='Email' value={user.email} />
           </div>
           </div>
           </div>
@@ -137,7 +164,7 @@ const Account = () => {
             {change ?
               <DataView value={wishlist?.products} listTemplate={listTemplate} />
               : <div>
-                <DataView value={user.orders} listTemplate={orderlistTemplate} />
+                <DataView value={orders} listTemplate={orderlistTemplate} />
               </div>}
           </div>
         </div>

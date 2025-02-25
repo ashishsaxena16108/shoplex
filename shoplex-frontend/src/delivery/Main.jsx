@@ -26,6 +26,22 @@ const showProducts = (order) => {
         })}
     </div>
 }
+const changeStatus = (order) => {
+    if(order.orderStatus==='PROCESSING'){
+       fetch(`http://localhost:8080/shoplex/delivery/mark-order-shipping/${order.orderId}`,{method:'POST',headers: { 'Content-Type': 'application/json','Authorization': `Bearer ${localStorage.getItem('token')}`}})
+    }
+    else if(order.orderStatus==='SHIPPING'){
+      fetch(`http://localhost:8080/shoplex/delivery/mark-order-out-for-delivery/${order.orderId}`,{method:'POST',headers: { 'Content-Type': 'application/json','Authorization': `Bearer ${localStorage.getItem('token')}`}})
+    }
+    else if(order.orderStatus==='OUT_FOR_DELIVERY'){
+      fetch(`http://localhost:8080/shoplex/delivery/mark-order-delivered/${order.orderId}`,{method:'POST',headers: { 'Content-Type': 'application/json','Authorization': `Bearer ${localStorage.getItem('token')}`}})
+    }
+
+}
+const changeStatusBtn = (order)=>{
+  let status = order.orderStatus
+  return <button onClick={()=>changeStatus(order)}>Mark {status}</button>
+}
   return (
     <div>
       {
@@ -40,6 +56,9 @@ const showProducts = (order) => {
                     <Column header='Vendor Address' field='vendorAddress'></Column>
                     <Column header='Total Amount' field='totalAmount'></Column>
                     <Column header='Placed At' field='createdAt'></Column>
+                    <Column header='Status' field='status'></Column>
+                    <Column body={changeStatus}>
+                    </Column>
                 </DataTable>
             </div>
         </div>

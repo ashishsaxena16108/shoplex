@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.shoplex.shopex_backend.Entities.AuthResponse;
 import com.shoplex.shopex_backend.Entities.ShoppingCart;
 import com.shoplex.shopex_backend.Entities.User;
 import com.shoplex.shopex_backend.Entities.Wishlist;
@@ -44,28 +43,36 @@ public class AuthController {
     private UserDetailsService userDetailsService;
 
     @PostMapping("/signin/user")
-    public ResponseEntity<?> userSignIn(@RequestBody User user) {
+    public ResponseEntity<Map<String,Object>> userSignIn(@RequestBody User user) {
         User existingUser = userRepository.findByEmail(user.getEmail());
+        Map<String,Object> m = new HashMap<>();
         if (existingUser != null && passwordEncoder.matches(user.getPassword(), existingUser.getPassword()) && !existingUser.isAdmin()) {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword()));
             final UserDetails userDetails = userDetailsService.loadUserByUsername(user.getEmail());
             final String jwt = jwtUtil.generateToken(userDetails.getUsername(),existingUser.getRole());
-            return ResponseEntity.ok(new AuthResponse(jwt,existingUser));
+            m.put("token", jwt);
+            m.put("user", existingUser);
+            return ResponseEntity.ok(m);
         } else {
-            return ResponseEntity.status(401).body("Invalid username or password for user");
+            m.put("error", "Invalid username or password for user");
+            return ResponseEntity.status(401).body(m);
         }
     }
 
     @PostMapping("/signin/admin")
-    public ResponseEntity<String> adminSignIn(@RequestBody User user) {
+    public ResponseEntity<Map<String,Object>> adminSignIn(@RequestBody User user) {
         User existingUser = userRepository.findByEmail(user.getEmail());
+        Map<String,Object> m = new HashMap<>();
         if (existingUser != null && passwordEncoder.matches(user.getPassword(), existingUser.getPassword()) && existingUser.isAdmin()) {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword()));
             final UserDetails userDetails = userDetailsService.loadUserByUsername(user.getEmail());
             final String jwt = jwtUtil.generateToken(userDetails.getUsername(),existingUser.getRole());
-            return ResponseEntity.ok(jwt);
+            m.put("token", jwt);
+            m.put("user", existingUser);
+            return ResponseEntity.ok(m);
         } else {
-            return ResponseEntity.status(401).body("Invalid username or password for admin");
+            m.put("error", "Invalid username or password for admin");
+            return ResponseEntity.status(401).body(m);
         }
     }
     @PostMapping("/signup/user")
@@ -90,7 +97,7 @@ public class AuthController {
         userRepository.save(user);
         return ResponseEntity.ok("Admin sign-up successful");
     }
-    @GetMapping("/verifyToken")
+    @PostMapping("/verifyToken")
   public ResponseEntity<Map<String,Object>> getProfile(@RequestBody String token) {
       Map<String,Object> m = new HashMap<>();
       String username = jwtUtil.extractUsername(token);

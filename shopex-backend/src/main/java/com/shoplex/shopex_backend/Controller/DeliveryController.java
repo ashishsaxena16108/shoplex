@@ -34,6 +34,22 @@ public class DeliveryController {
            return ResponseEntity.badRequest().body("Order not present");
          return ResponseEntity.ok("Order marked delivered sucessfully");
      }
-     
-     
+     @PostMapping("/mark-order-shipping/{orderId}")
+      public ResponseEntity<String> markOrderShipping(@PathVariable Long orderId) {
+          int res = deliveryService.markOrderShipping(orderId);
+          if(res==0)
+            return ResponseEntity.badRequest().body("Order marking shipping failed");
+          if(res==-1)
+            return ResponseEntity.badRequest().body("Order not present");
+          return ResponseEntity.ok("Order marked shipping sucessfully");
+      }
+     @PostMapping("/mark-order-out-for-delivery/{orderId}")
+     public ResponseEntity<String> markOrderOutForDelivery(@PathVariable Long orderId) {
+         int res = deliveryService.markOrderOutForDelivery(orderId);
+         if(res==0)
+           return ResponseEntity.badRequest().body("Order marking out for delivery failed");
+         if(res==-1)
+           return ResponseEntity.badRequest().body("Order not present");
+         return ResponseEntity.ok("Order marked out for delivery sucessfully");
+     }
 }
