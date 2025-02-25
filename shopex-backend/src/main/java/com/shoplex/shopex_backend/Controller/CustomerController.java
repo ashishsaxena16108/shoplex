@@ -15,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.razorpay.RazorpayException;
 import com.shoplex.shopex_backend.Entities.Order;
+import com.shoplex.shopex_backend.Entities.ReviewsAndRating;
 import com.shoplex.shopex_backend.Entities.ShoppingCart;
 import com.shoplex.shopex_backend.Entities.Wishlist;
 import com.shoplex.shopex_backend.Service.CustomerService;
@@ -22,6 +23,7 @@ import com.shoplex.shopex_backend.Service.CustomerService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 
 
@@ -80,6 +82,10 @@ public class CustomerController {
       
       return ResponseEntity.ok(customerService.cancelOrder(orderId,principal.getName()));
   }
-  
+  @PostMapping("/addreview/{productId}")
+  public ResponseEntity<String> addReview(@PathVariable Long productId,@RequestBody ReviewsAndRating rar,Principal principal) {
+      int result = customerService.addReview(productId,rar,principal.getName());
+      return result==1?ResponseEntity.ok("Review added successfully"):ResponseEntity.badRequest().body("Review addition failed");
+  }
   
 }

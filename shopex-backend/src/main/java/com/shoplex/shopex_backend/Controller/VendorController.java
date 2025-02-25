@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +29,7 @@ import com.shoplex.shopex_backend.Repositories.ProductRepository;
 import com.shoplex.shopex_backend.Repositories.UserRepository;
 import com.shoplex.shopex_backend.Repositories.VendorProductRepository;
 import com.shoplex.shopex_backend.Service.ImageService;
+import com.shoplex.shopex_backend.dtos.VendorOrderDTO;
 
 import org.springframework.web.bind.annotation.GetMapping;
 
@@ -113,8 +115,9 @@ public class VendorController {
     }
 
     @GetMapping("/myorders")
-    public ResponseEntity<List<Order>> getMyOrders(Principal principal) {
-        return ResponseEntity.ok(orderRepository.findOrdersByVendorEmail(principal.getName()));
+    public ResponseEntity<List<VendorOrderDTO>> getMyOrders(Principal principal) {
+        
+        return ResponseEntity.ok(getVendorOrders(principal.getName()));
     }
 
     @PostMapping("/updateorderstatus")
@@ -137,5 +140,34 @@ public class VendorController {
         return ResponseEntity.ok("Order status updated successfully");
 
     }
+    public List<VendorOrderDTO> getVendorOrders(String vendorEmail) {
+        User vendor = userRepository.findByEmail(vendorEmail);
+        List<Order> orders = orderRepository.findAll(); // Fetch all orders
 
+        return orders.stream()
+                .map(order -> filterOrderItemsForVendor(order, vendor))
+                .filter(dto -> !dto.getOrderItems().isEmpty()) // Filter out orders with no items for the vendor
+                .collect(Collectors.toList());
+    }
+
+    private VendorOrderDTO filterOrderItemsForVendor(Order order, User vendor) {
+        double totalAmount = order.getOrderItems().stream()
+                .filter(item -> item.getVendorProduct().getVendor().equals(vendor))
+                .mapToDouble(item -> item.getQuantity() * item.getVendorProduct().getPrice())
+                .sum();
+        List<VendorOrderDTO.ItemDTO> vendorItems = order.getOrderItems().stream()
+                .filter(item -> item.getVendorProduct().getVendor().equals(vendor))
+                .map(item -> new VendorOrderDTO.ItemDTO(
+                        item.getId(),
+                        item.getVendorProduct().getProduct().getName(),
+                        item.getQuantity()))
+                .collect(Collectors.toList());
+
+        return new VendorOrderDTO(
+                order.getId(),
+                totalAmount,
+                order.getCreatedAt(),
+                vendorItems,
+                order.getOrderStatus());
+    }
 }

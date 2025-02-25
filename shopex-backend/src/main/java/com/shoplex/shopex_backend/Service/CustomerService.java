@@ -15,6 +15,7 @@ import com.shoplex.shopex_backend.Entities.Item;
 import com.shoplex.shopex_backend.Entities.Order;
 import com.shoplex.shopex_backend.Entities.Payment;
 import com.shoplex.shopex_backend.Entities.Product;
+import com.shoplex.shopex_backend.Entities.ReviewsAndRating;
 import com.shoplex.shopex_backend.Entities.ShoppingCart;
 import com.shoplex.shopex_backend.Entities.User;
 import com.shoplex.shopex_backend.Entities.Wishlist;
@@ -119,6 +120,19 @@ public class CustomerService {
         order.setOrderStatus(Order.OrderStatus.CANCELLED);
         userRepository.save(user);
         return "Order cancelled successfully";
+    }
+    public int addReview(Long productId,ReviewsAndRating rar,String username){
+        User user = userRepository.findByEmail(username);
+        if(user==null)
+            return 0;
+        Optional<Product> product = productRepository.findById(productId);
+        if(product.isEmpty())
+            return -1;
+        rar.setUser(user);
+        product.get().getReviewsAndRatings().add(rar);
+        rar.setProduct(product.get());
+        productRepository.save(product.get());
+        return 1;
     }
     // @Scheduled(fixedRate = 1200000)
     // public void givePayments(){

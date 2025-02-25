@@ -1,0 +1,35 @@
+.rating {
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: center;
+}
+
+.rating input {
+  display: none;
+}
+
+.rating label {
+  position: relative;
+  width: 1em;
+  font-size: 3rem;
+  color: #FFD700;
+  cursor: pointer;
+}
+
+.rating label::before {
+  content: '☆';
+  position: absolute;
+  opacity: 1;
+}
+
+.rating input:checked ~ label:before {
+  content: '★';
+  position: absolute;
+  opacity: 1;
+}
+
+.rating label:hover:before,
+.rating label:hover ~ label:before {
+  content: '★';
+  opacity: 1;
+}

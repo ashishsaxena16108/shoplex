@@ -55,7 +55,7 @@ const changeStatusBtn = (order)=>{
                     <Column header='User Address' field='userAdress'></Column>
                     <Column header='Vendor Address' field='vendorAddress'></Column>
                     <Column header='Total Amount' field='totalAmount'></Column>
-                    <Column header='Placed At' field='createdAt'></Column>
+                    <Column header='Placed At' body={(order)=>order.createdAt.split('T')[0]}></Column>
                     <Column header='Status' field='status'></Column>
                     <Column body={changeStatus}>
                     </Column>

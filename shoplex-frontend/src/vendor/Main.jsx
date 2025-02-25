@@ -4,6 +4,7 @@ import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Link } from 'react-router';
 import { useSelector } from 'react-redux';
+import { button, div } from 'framer-motion/client';
 const Main = () => {
   const { loggedIn } = useSelector((state)=>state.auth)
   const [myProducts, setMyProducts] = useState([]);
@@ -52,7 +53,22 @@ const Main = () => {
   const footer = (<div className=' text-2xl m-3 font-bold'>{`In total there are ${myProducts ? myProducts.length : 0} ${!isChange?'products':'orders'}.`}</div>);
   const orderFooter = (<div className=' text-2xl m-3 font-bold'>{`In total there are ${myOrders ? myOrders.length : 0} ${!isChange?'products':'orders'}.`}</div>);
   const productName=(order)=>{
-      return <span>{order.orderItems[0].vendorProduct.product.name}</span>
+      return (<div className='flex flex-col gap-0 h-[150px] overflow-y-scroll scrollbar-hide'>
+      {order.orderItems.map((item,index)=>{
+         return <div key={index} className=' bg-emerald-300 m-2 p-3 rounded-lg text-xl font-bold'>
+                <h1>Product: {item.productName}</h1>
+                <h1>Quantity: {item.quantity}</h1></div>
+      })}
+      </div>)
+  }
+  const status = (order) =>{
+     return <button className=' bg-emerald-800 rounded-xl text-white p-3'>{order.orderStatus}</button>
+  }
+  const handleStatus = (order)=>{
+       fetch(`http://localhost:8080/shoplex/vendor/updateorderstatus?orderId=${order.orderId}`,{method:'POST',headers: { 'Content-Type': 'application/json','Authorization': `Bearer ${localStorage.getItem('token')}`}}).then(res=>res.json()).then(data=>console.log(data))
+  }
+  const ready = (order) =>{
+    return (order.orderStatus!=='PROCESSING' ? <button className=' bg-emerald-600 rounded-xl text-white p-3' onClick={()=>handleStatus(order)}>Ready To Ship</button> : <div></div>)
   }
   return (
     <div>
@@ -83,7 +99,11 @@ const Main = () => {
         : <div>
         <DataTable value={myOrders} footer={orderFooter} header={header} tableStyle={{ minWidth: '90rem',backgroundColor: '#ffffff',borderRadius: '10px',fontSize
         : '20px' }}>
-          <Column body={productName} header='Product Name'/>
+          <Column body={productName} header='Product Name' style={{padding:'10px'}} headerStyle={{backgroundColor:'#d1d5dc',borderTopLeftRadius:'10px'}}/>
+          <Column body={(order)=>order.createdAt.split('T')[0]} header='Placed At' style={{padding:'10px'}} headerStyle={{backgroundColor:'#d1d5dc'}}/>
+          <Column field='totalAmount' header='Total Amount' style={{padding:'10px'}} headerStyle={{backgroundColor:'#d1d5dc'}}/>
+          <Column body={status} header='Status' style={{padding:'10px'}} headerStyle={{backgroundColor:'#d1d5dc'}}/>
+          <Column body={ready} style={{padding:'10px'}} headerStyle={{backgroundColor:'#d1d5dc',borderTopRightRadius:'10px'}}/>
         </DataTable>
         </div>}
       </div>

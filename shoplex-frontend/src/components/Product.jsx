@@ -1,15 +1,46 @@
 import React,{ useState,useEffect,useContext } from 'react'
-import Nav from './Nav'
+import { motion } from 'framer-motion'
+import Close from '../assets/close.svg'
 import { useParams,useNavigate } from 'react-router'
-import { useDispatch } from 'react-redux'
-import { toast } from 'react-toastify'
+import { useDispatch,useSelector } from 'react-redux'
+import { toast,Bounce } from 'react-toastify'
 import { addToCart } from '../feature/cart/cartSlice'
+import './Product.css'
 const Product = () => {
  const { pid } = useParams()   
  const navigate = useNavigate()
  const dispatch = useDispatch()
+ const { loggedIn } = useSelector((state) => state.auth)
+ const [rate, setRate] = useState(0)
  const [product, setproduct] = useState({})
  const [availability, setAvailability] = useState(false)
+ const [isOpen, setIsOpen] = useState(false);
+ const handleReviewBtn = ()=>{
+    if(loggedIn){
+        setIsOpen(true)
+    }
+    else{
+      alert('Please login to write a review')
+    }
+ }
+ const postReview = (data)=>{
+    fetch(`http://localhost:8080/shoplex/customer/addreview/${pid}`,{
+      method:'POST',
+      body:JSON.stringify(data),
+      headers:{
+        'Content-Type':'application/json',
+        'Authorization':`Bearer ${localStorage.getItem('token')}`}})
+      .then(res=>res.text())
+ }
+ const handleReviewSubmit = (e)=>{
+    e.preventDefault();
+    let form = e.target;
+    let formData = new FormData(form);
+    formData.append('rating',rate)
+    let data = Object.fromEntries(formData.entries());
+    postReview(data)
+    setIsOpen(false)
+ }
  const handleAddToCartBtn = (vp)=>{
     vp={...vp,product}
     dispatch(addToCart({vendorProduct:vp,quantity:1}))
@@ -32,7 +63,8 @@ const Product = () => {
     .then(json=>{
     const minPrice=Math.min(...json.vendorProducts?.map(vp => vp.price))
     const isAvailable = json.vendorProducts?.some(vp => vp.quantity > 0)
-    let updatedProduct={...json,minPrice}
+    const avgrating = json.reviewsAndRatings.reduce((acc, curr) => acc + curr.rating, 0) / json.reviewsAndRatings.length
+    let updatedProduct={...json,minPrice,avgrating}
     setproduct(updatedProduct)
     setAvailability(isAvailable)
     })
@@ -40,6 +72,34 @@ const Product = () => {
   
   return (
     <div>
+      {isOpen && (
+        <div className="fixed inset-0 bg-gray-700 flex items-center justify-center ">
+          <motion.div
+            initial={{ y: -100, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: -100, opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="relative bg-white rounded-2xl shadow-lg p-6 w-[600px] h-[450px] text-3xl"
+          >
+          <img src={Close} onClick={()=>setIsOpen(false)} alt="" />
+          <form className='flex justify-between flex-col' onSubmit={handleReviewSubmit}>
+           <div>
+            <label htmlFor="Rating">Ratings</label>
+            <div className='text-7xl text-amber-300'>
+            {[...Array(5)].map((_, index) => (
+            <span key={index} onClick={() => setRate(index + 1)} className='cursor-pointer'>{index < rate ? '★' : '☆'}</span>
+      ))}
+            </div>
+           </div>
+            <div className='flex flex-col'>
+            <label htmlFor="reviewText">Review</label>
+            <textarea name="reviewText" id="" placeholder='Write your review here' className='m-3 p-2 rounded-lg'></textarea>
+            </div>
+            <div className='flex justify-center items-center'><button role='submit' className=' text-white bg-blue-700 p-3 rounded-xl'>Post your review</button></div>
+          </form>
+          </motion.div>
+          </div>
+      )}
       <div className='flex flex-col m-7'>
       <section className='flex' id='main'>
       <img width={640} src={product.imageUrl} alt="" />
@@ -92,26 +152,37 @@ const Product = () => {
             </div>
         })}
       </section>
-      <section className='flex flex-row justify-between w-3/5'>
+      <section className='flex flex-row gap-7'>
       <div className='flex flex-row gap-7'>
        <div>
-        <h1 className='text-5xl font-extrabold'>Customer reviews</h1>
-        <h1>{[...Array(5).map((_,index)=>{
-           if(index<product.avgRating)
-             return <i>★</i>
+        <h1 className='text-5xl font-extrabold '>Customer ratings</h1>
+        <h1 className='text-5xl text-amber-500 flex '>{product.avgrating && [...Array(5)].map((_,index)=>{
+           if(index<product.avgrating)
+             return <span key={index}>★</span>
            else
-             return <i>☆</i>
+             return <span key={index}>☆</span>
         }
-        )]}</h1>
-        <div><button className='text-2xl rounded-xl border-4 font-semibold bg-gray-200 border-black p-2 m-7'>Write a product review</button></div>
+        )}
+        {product.avgrating && <h2 className='text-black text-3xl ml-3 mt-3'> {product.avgrating} out of 5</h2>}
+        </h1>
+        <div><button onClick={handleReviewBtn} className='text-2xl rounded-xl border-4 font-semibold bg-gray-200 border-black p-2 m-7'>Write a product review</button></div>
         </div>
         <div className='w-0.5 bg-black'></div>
       </div>
-      <div>
-        <h1 className='text-5xl font-extrabold flex justify-between'><span>Reviews & Ratings</span></h1>
-        {product.reviewsAndRatings>0?
+      <div className=''>
+        <h1 className='text-5xl font-extrabold flex justify-between'><span>Reviews</span></h1>
+        {product.reviewsAndRatings.length>0?
         product.reviewsAndRatings.map((rar)=>{
-          return <div></div>
+          return <div className='text-3xl m-4 flex bg-blue-300 rounded-lg p-2 w-full'>
+            <h1>{rar.reviewText}</h1>
+            <h1 className=' text-amber-500 text-5xl'>{rar.rating && [...Array(5)].map((_,index)=>{
+           if(index<rar.rating)
+             return <span key={index}>★</span>
+           else
+             return <span key={index}>☆</span>
+        }
+        )}</h1>
+          </div>
         })
         :<h1 className='text-4xl m-8 text-gray-500'>Be the first one to review</h1>}
       </div>

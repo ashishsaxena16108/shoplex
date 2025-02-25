@@ -28,11 +28,11 @@ public class ReviewsAndRating {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne
-    @JoinColumn(name = "product_id", nullable = false)
+    @JoinColumn(name = "product_id")
     @JsonBackReference(value="product-ratings")
     private Product product;
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id")
     @JsonBackReference(value="user-ratings")
     private User user;
     private Integer rating;
