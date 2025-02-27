@@ -1,0 +1,4 @@
+FROM eclipse-temurin:17-jdk-alpine
+VOLUME /tmp
+COPY shopex-backend.jar shopex-backend.jar
+ENTRYPOINT ["java","-jar","/shopex-backend.jar"]
