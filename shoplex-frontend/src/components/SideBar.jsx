@@ -12,7 +12,7 @@ const SideBar = ({ open }) => {
   const [categories, setcategories] = useState([])
   const [brands, setbrands] = useState([])
   const handleFilter = (category) => {
-    const url = category ? `http://localhost:8080/shoplex/home/products/${category}` : 'http://localhost:8080/shoplex/home/products'
+    const url = category ? `${import.meta.env.VITE_REACT_APP_API_URL}/home/products/${category}` : `${import.meta.env.VITE_REACT_APP_API_URL}/home/products`
     fetch(url, { method: 'GET' })
       .then(res => res.json())
       .then(json => {
@@ -24,7 +24,7 @@ const SideBar = ({ open }) => {
       })
   }
   useEffect(() => {
-    fetch('http://localhost:8080/shoplex/home/categories', { method: 'GET' })
+    fetch(`${import.meta.env.VITE_REACT_APP_API_URL}/home/categories`, { method: 'GET' })
         .then(res => res.json())
         .then(json => {
             setcategories(json)
@@ -49,7 +49,8 @@ const SideBar = ({ open }) => {
                 pathname: '/vendor'}} ><img src={Move} onClick={()=>dispatch(setRole({role:"VENDOR"}))}/></Link></li>
         <li className='text-2xl w-full p-4 hover:bg-gray-300 flex flex-row justify-between'><span>Delivery's Page</span><Link to={{
                 pathname: '/delivery'}} ><img src={Move} onClick={()=>dispatch(setRole({role:"DELIVERY_PERSONNEL"}))}/></Link></li>
-        <li className='text-2xl w-full p-4 hover:bg-gray-300 flex flex-row justify-between'><span>Admin's Page</span><Link to='/vendor'><img src={Move}/></
+        <li className='text-2xl w-full p-4 hover:bg-gray-300 flex flex-row justify-between'><span>Admin's Page</span><Link to={{
+                pathname: '/admin'}}><img onClick={()=>dispatch(setRole({role:"ADMIN"}))} src={Move}/></
         Link></li>
         </ul>
     </div>

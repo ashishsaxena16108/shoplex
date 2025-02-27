@@ -14,13 +14,12 @@ import com.razorpay.RazorpayException;
 
 @Service
 public class PaymentService {
-    @Value("${razorpay.key_id}")
-    private String key_id;
-    @Value("${razorpay.key_secret}")
-    private String key_secret;
-
+    private final RazorpayClient razorpayClient;
+    public PaymentService(@Value("${razorpay.key_id}") String key_id, @Value("${razorpay.key_secret}") String key_secret) throws RazorpayException {
+        razorpayClient = new RazorpayClient(key_id, key_secret);
+    }
+    
     public String getPayment(Integer amount) throws RazorpayException {
-        RazorpayClient razorpayClient = new RazorpayClient(key_id, key_secret);
         JSONObject orderRequest = new JSONObject();
         orderRequest.put("amount", amount);
         orderRequest.put("currency", "INR");
@@ -33,7 +32,6 @@ public class PaymentService {
     }
     public String createFundAccount(String contactId, String accountNumber, String ifsc, String name) {
         try {
-            RazorpayClient razorpayClient = new RazorpayClient(key_id, key_secret);
             JSONObject bankAccount = new JSONObject();
             bankAccount.put("account_number", accountNumber);
             bankAccount.put("ifsc", ifsc);
@@ -54,7 +52,6 @@ public class PaymentService {
 
     public void sendPayment(Map<String,Object> data){
        try {
-        RazorpayClient razorpay = new RazorpayClient(key_id, key_secret);
         JSONObject request = new JSONObject();
         request.put("account_number", "your_razorpay_account_number"); // Your RazorpayX Account
         request.put("amount", data.get("amount")); // Amount in paise
@@ -69,11 +66,11 @@ public class PaymentService {
         contact.put("contact", data.get("vendor_phone"));
 
         // Create a contact first
-        Customer createdContact = razorpay.customers.create(contact);
+        Customer createdContact = razorpayClient.customers.create(contact);
         request.put("contact_id", createdContact);
 
         // Make fund transfer
-        FundAccount fundAccount = razorpay.fundAccount.create(request);
+        FundAccount fundAccount = razorpayClient.fundAccount.create(request);
         
     } catch (Exception e) {
         e.getStackTrace();

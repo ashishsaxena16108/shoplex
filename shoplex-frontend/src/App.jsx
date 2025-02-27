@@ -8,7 +8,7 @@ import { ToastContainer,toast } from 'react-toastify';
 const App = ({ }) => {
   const dispatch = useDispatch()
   const { cart } = useSelector((state) => state.cart)
-  const { loggedIn } = useSelector((state)=>state.auth)
+  const { loggedIn,role } = useSelector((state)=>state.auth)
   const location = useLocation()
   useEffect(() => {
     let token = localStorage.getItem('token');
@@ -16,7 +16,7 @@ const App = ({ }) => {
       const decodeToken = (token) => JSON.parse(atob(token.split('.')[1]));
       const isTokenExpired = (token) => decodeToken(token).exp * 1000 < Date.now();
       if(!isTokenExpired(token)){
-        fetch('http://localhost:8080/shoplex/auth/verifyToken',{method:'POST',
+        fetch(`${import.meta.env.VITE_REACT_APP_API_URL}/auth/verifyToken`,{method:'POST',
           body:token
         })
         .then(res=>res.json())
@@ -49,15 +49,18 @@ const App = ({ }) => {
       localStorage.setItem("cart", JSON.stringify(cart));
     }
   }, [cart]);
-  if(loggedIn){
-          if(cart.items.length===0){
-          useEffect(() => {
-              fetch('http://localhost:8080/shoplex/customer/savecart',{method:'POST',body:JSON.stringify(cart),headers:{
-                  'Content-Type': 'application/json','Authorization': `Bearer ${localStorage.getItem('token')}`}
-              });
-          }, [cart,loggedIn])
-        }
-      }
+  useEffect(() => {
+    if (loggedIn && cart.items.length === 0) {
+      fetch(`${import.meta.env.VITE_REACT_APP_API_URL}/customer/savecart`, {
+        method: 'POST',
+        body: JSON.stringify(cart),
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      })
+    }
+  }, [cart, loggedIn])
   useEffect(() => {
     if (location.pathname.startsWith('/vendor')) {
       dispatch(setRole({role:'VENDOR'}))
@@ -65,10 +68,13 @@ const App = ({ }) => {
     else if(location.pathname.startsWith('/vendor')){
       dispatch(setRole({role:'DELIVERY_PERSONNEL'}))
     }
+    else if(location.pathname.startsWith('/admin')){
+      dispatch(setRole({role:'ADMIN'}))
+    }
   }, [location, dispatch])
   return (
     <div>
-      <Nav />
+      <Nav frole={role}/>
       <ToastContainer/>
       <Outlet />
     </div>

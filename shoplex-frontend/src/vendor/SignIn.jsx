@@ -5,10 +5,10 @@ const SignIn = ({ role }) => {
   const navigate = useNavigate()
   function signIn(data){
     if(role === 'ADMIN'){
-        fetch('http://localhost:8080/shoplex/auth/signup/admin', { method: 'POST',body: JSON.stringify(data),headers: { 'Content-Type': 'application/json'}})
+        fetch(`${import.meta.env.VITE_REACT_APP_API_URL}/auth/signup/admin`, { method: 'POST',body: JSON.stringify(data),headers: { 'Content-Type': 'application/json'}})
     }
     else{
-        fetch('http://localhost:8080/shoplex/auth/signup/user', { method: 'POST',body: JSON.stringify(data),headers: { 'Content-Type': 'application/json'}})
+        fetch(`${import.meta.env.VITE_REACT_APP_API_URL}/auth/signup/user`, { method: 'POST',body: JSON.stringify(data),headers: { 'Content-Type': 'application/json'}})
         .then(res => {
           if(role==="VENDOR")
           navigate('/vendor/login')

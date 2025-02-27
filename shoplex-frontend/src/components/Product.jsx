@@ -24,7 +24,7 @@ const Product = () => {
     }
  }
  const postReview = (data)=>{
-    fetch(`http://localhost:8080/shoplex/customer/addreview/${pid}`,{
+    fetch(`${import.meta.env.VITE_REACT_APP_API_URL}/customer/addreview/${pid}`,{
       method:'POST',
       body:JSON.stringify(data),
       headers:{
@@ -58,7 +58,7 @@ const Product = () => {
     navigate('/')
  }
   useEffect(() => {
-    fetch(`http://localhost:8080/shoplex/home/product/${pid}`)
+    fetch(`${import.meta.env.VITE_REACT_APP_API_URL}/home/product/${pid}`)
     .then(res=>res.json())
     .then(json=>{
     const minPrice=Math.min(...json.vendorProducts?.map(vp => vp.price))
@@ -102,7 +102,8 @@ const Product = () => {
       )}
       <div className='flex flex-col m-7'>
       <section className='flex' id='main'>
-      <img width={640} src={product.imageUrl} alt="" />
+      <div className=' w-[600px] h-[830px] overflow-scroll scrollbar-hide p-4 object-fill'>
+      <img width={640} className=' object-center' src={product.imageUrl} alt="" /></div>
       <div className='m-7 flex flex-col'>
       <h1 className=' m-4 text-5xl font-extrabold'>{product.name}</h1>
       <h1></h1>
@@ -156,14 +157,14 @@ const Product = () => {
       <div className='flex flex-row gap-7'>
        <div>
         <h1 className='text-5xl font-extrabold '>Customer ratings</h1>
-        <h1 className='text-5xl text-amber-500 flex '>{product.avgrating && [...Array(5)].map((_,index)=>{
+        <h1 className='text-5xl text-amber-500 flex '>{product.avgrating ? [...Array(5)].map((_,index)=>{
            if(index<product.avgrating)
              return <span key={index}>★</span>
            else
              return <span key={index}>☆</span>
         }
-        )}
-        {product.avgrating && <h2 className='text-black text-3xl ml-3 mt-3'> {product.avgrating} out of 5</h2>}
+        ):<p></p>}
+        {product.avgrating ? <h2 className='text-black text-3xl ml-3 mt-3'> {product.avgrating} out of 5</h2>:<p></p>}
         </h1>
         <div><button onClick={handleReviewBtn} className='text-2xl rounded-xl border-4 font-semibold bg-gray-200 border-black p-2 m-7'>Write a product review</button></div>
         </div>
@@ -171,7 +172,7 @@ const Product = () => {
       </div>
       <div className=''>
         <h1 className='text-5xl font-extrabold flex justify-between'><span>Reviews</span></h1>
-        {product.reviewsAndRatings.length>0?
+        {product.reviewsAndRatings && product.reviewsAndRatings.length>0?
         product.reviewsAndRatings.map((rar)=>{
           return <div className='text-3xl m-4 flex bg-blue-300 rounded-lg p-2 w-full'>
             <h1>{rar.reviewText}</h1>

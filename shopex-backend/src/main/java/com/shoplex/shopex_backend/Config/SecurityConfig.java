@@ -44,6 +44,7 @@ public class SecurityConfig {
                 .requestMatchers("/shoplex/home/**","/shoplex/auth/**").permitAll()
                 .requestMatchers("/shoplex/admin/**").hasRole("ADMIN")
                 .requestMatchers("/shoplex/vendor/**").hasRole("VENDOR")
+                .requestMatchers("/shoplex/customer/updateProfile").hasAnyRole("USER","VENDOR","ADMIN","DELIVERY_PERSONNEL")
                 .requestMatchers("/shoplex/customer/**").hasRole("USER").anyRequest().authenticated()
                 
                 )

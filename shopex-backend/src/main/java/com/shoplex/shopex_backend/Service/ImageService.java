@@ -15,13 +15,8 @@ import org.springframework.beans.factory.annotation.Value;
 @Service
 public class ImageService {
     private Cloudinary cloudinary;
-    @Value("${cloudinary.cloud_name}")
-    private String cloudName;
-    @Value("${cloudinary.api_key}")
-        private String keyId;
-    @Value("${cloudinary.api_secret}")
-    private String secret;
-    public ImageService() {
+    
+    public ImageService(@Value("${cloudinary.cloud_name}")String cloudName,@Value("${cloudinary.api_key}") String keyId,@Value("${cloudinary.api_secret}") String secret) {              
         
         cloudinary = new Cloudinary(ObjectUtils.asMap(
             "cloud_name", cloudName,

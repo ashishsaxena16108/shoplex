@@ -3,13 +3,15 @@ import Minus from '../assets/minus.svg'
 import Plus from '../assets/plus.svg'
 import Emptyheart from '../assets/emptyheart.svg' 
 import Fillheart from '../assets/fillheart.svg'
+import { toast,Bounce } from 'react-toastify'
 import { Link } from 'react-router'
+import { useSelector } from 'react-redux'
 const Card = ({product,inwish=false}) => {
     const [addwish, setaddwish] = useState(inwish)
-    
+    const { loggedIn } = useSelector((state)=>state.auth)
     const handleWishlist = (id) => {
-       if(isloggedIn){
-          fetch('http://localhost:8080/shoplex/customer/addtowishlist',{
+       if(loggedIn){
+          fetch(`${import.meta.env.VITE_REACT_APP_API_URL}/customer/addtowishlist`,{
             method:'POST',body:id,headers:{
                'Content-Type':'application/json',
                'Authorization':`Bearer ${localStorage.getItem('token')}`
@@ -18,7 +20,17 @@ const Card = ({product,inwish=false}) => {
           setaddwish(true)
        }
        else{
-          alert('Please log in for adding product to wishlist')
+        toast('Please log in for adding product to wishlist', {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: false,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Bounce,
+          });
        }
     }
   return (

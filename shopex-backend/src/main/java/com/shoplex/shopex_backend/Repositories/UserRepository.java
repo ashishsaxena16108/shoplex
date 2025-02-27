@@ -14,8 +14,8 @@ import com.shoplex.shopex_backend.Entities.User;
 public interface UserRepository extends JpaRepository<User,Long> {
     User findByEmail(String email);
     
-    @Query("SELECT u FROM users u WHERE u.role = 'DELIVERY_AGENT' AND u.isAvailable = true")
+    @Query("SELECT u FROM users u WHERE u.role = 'DELIVERY_PERSONNEL' AND u.isAvailable = true")
     Optional<User> findFirstByIsAvailableTrue();
 
-    List<User> findAllByRole(String role);
+    List<User> findAllByRole(User.Role role);
 }

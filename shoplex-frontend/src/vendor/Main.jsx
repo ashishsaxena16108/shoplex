@@ -2,24 +2,25 @@ import React,{ useState,useEffect } from 'react'
 import Nav from '../components/Nav'
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
-import { Link } from 'react-router';
+import { Link,useNavigate } from 'react-router';
 import { useSelector } from 'react-redux';
-import { button, div } from 'framer-motion/client';
+import { button, div, nav } from 'framer-motion/client';
 const Main = () => {
   const { loggedIn } = useSelector((state)=>state.auth)
+  const navigate = useNavigate()
   const [myProducts, setMyProducts] = useState([]);
   const [myOrders, setMyOrders] = useState([]);
   const [product,setProduct] = useState({});
   const [isChange, setIsChange] = useState(false);
   const [openForm, setOpenForm] = useState(false);
   const getProducts = () => {
-    fetch('http://localhost:8080/shoplex/vendor/myproducts', { method: 'GET',headers: { 'Content-Type': 'application/json','Authorization': `Bearer ${localStorage.getItem('token')}`}})
+    fetch(`${import.meta.env.VITE_REACT_APP_API_URL}/vendor/myproducts`, { method: 'GET',headers: { 'Content-Type': 'application/json','Authorization': `Bearer ${localStorage.getItem('token')}`}})
     .then(res => res.json())
     .then(data => {setMyProducts(data)
     })
   }
   const getOrders = () => {
-    fetch('http://localhost:8080/shoplex/vendor/myorders', { method: 'GET',headers: { 'Content-Type': 'application/json','Authorization': `Bearer ${localStorage.getItem('token')}`}})
+    fetch(`${import.meta.env.VITE_REACT_APP_API_URL}/vendor/myorders`, { method: 'GET',headers: { 'Content-Type': 'application/json','Authorization': `Bearer ${localStorage.getItem('token')}`}})
     .then(res => res.json())
     .then(data => {
       console.log(data)
@@ -39,12 +40,18 @@ const Main = () => {
   }
   const edit = (product) =>{
     return <button className='p-2 bg-gradient-to-r from-green-500 via-blue-400 to-cyan-400 rounded-lg text-white w-14 cursor-pointer hover:scale-110' onClick={()=>{
-      setOpenForm(true)
+      navigate('/vendor/addproduct',{state:{product:product}})
       setProduct(product)
     }}>Edit</button>
   }
+  const handleDelete = (product) =>{
+    confirm('Are you sure you want to delete this product?') && 
+    fetch(`${import.meta.env.VITE_REACT_APP_API_URL}/vendor/deleteproduct?productId=${product.productId}`,{method:'POST',headers: { 'Content-Type': 'application/json','Authorization': `Bearer ${localStorage.getItem('token')}`}})
+    .then(res=>res.json())
+    .then(data=>console.log(data))
+  }
   const deleteProduct = (product) =>{
-    return <button className=' bg-red-600 rounded-lg p-2 text-white w-20 cursor-pointer hover:scale-110' >Delete</button>
+    return <button className=' bg-red-600 rounded-lg p-2 text-white w-20 cursor-pointer hover:scale-110' onClick={()=>{handleDelete(product)}}>Delete</button>
   }
   const header = (
     <div className="flex flex-wrap align-items-center justify-content-between gap-2 bg-gray-400">
@@ -65,7 +72,7 @@ const Main = () => {
      return <button className=' bg-emerald-800 rounded-xl text-white p-3'>{order.orderStatus}</button>
   }
   const handleStatus = (order)=>{
-       fetch(`http://localhost:8080/shoplex/vendor/updateorderstatus?orderId=${order.orderId}`,{method:'POST',headers: { 'Content-Type': 'application/json','Authorization': `Bearer ${localStorage.getItem('token')}`}}).then(res=>res.json()).then(data=>console.log(data))
+       fetch(`${import.meta.env.VITE_REACT_APP_API_URL}/vendor/updateorderstatus?orderId=${order.orderId}`,{method:'POST',headers: { 'Content-Type': 'application/json','Authorization': `Bearer ${localStorage.getItem('token')}`}}).then(res=>res.json()).then(data=>console.log(data))
   }
   const ready = (order) =>{
     return (order.orderStatus!=='PROCESSING' ? <button className=' bg-emerald-600 rounded-xl text-white p-3' onClick={()=>handleStatus(order)}>Ready To Ship</button> : <div></div>)

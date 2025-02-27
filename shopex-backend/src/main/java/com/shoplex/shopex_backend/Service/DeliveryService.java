@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.shoplex.shopex_backend.Entities.Order;
 import com.shoplex.shopex_backend.Entities.User;
@@ -21,7 +22,8 @@ public class DeliveryService {
      @Autowired
      private OrderRepository orderRepository;
 
-     @Scheduled(fixedRate = 1200000)
+     @Scheduled(fixedRate = 120000)
+     @Transactional
      public void assignDeliveryAgent() {
          // assign delivery agent to the order
         Optional<Order> order = orderRepository.findByOrderProcessing();
@@ -31,6 +33,7 @@ public class DeliveryService {
                 order.get().setOrderStatus(Order.OrderStatus.SHIPPING);
                 deliveryAgent.get().setAvailable(false);
                 order.get().setDeliveryAgent(deliveryAgent.get());
+                deliveryAgent.get().getDeliveryOrders().add(order.get());
                 orderRepository.save(order.get());
                 userRepository.save(deliveryAgent.get());
             }
@@ -68,7 +71,7 @@ public class DeliveryService {
      public List<DeliveryOrderDTO> getDeliveryOrders(String deliveryAgentEmail) {
         User deliveryPerson = userRepository.findByEmail(deliveryAgentEmail);
           
-        List<Order> orders = deliveryPerson.getDeliveryOrders();
+        List<Order> orders = orderRepository.findByDeliveryAgent(deliveryPerson);
         return orders.stream().map(this::convertToDeliveryOrderDTO).collect(Collectors.toList());
     }
 

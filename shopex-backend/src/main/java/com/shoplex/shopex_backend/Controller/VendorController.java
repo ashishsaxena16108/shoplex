@@ -51,7 +51,7 @@ public class VendorController {
     // Add or edit product
     @PostMapping("/addproduct")
     public ResponseEntity<String> addProduct(@RequestParam("product") String vendorProductJSON,
-            @RequestParam("file") MultipartFile file, Principal principal) throws IOException {
+            @RequestParam(value="file",required = false) MultipartFile file, Principal principal) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         VendorProduct vendorProduct = objectMapper.readValue(vendorProductJSON, VendorProduct.class);
         User vendor = userRepository.findByEmail(principal.getName());
@@ -61,15 +61,16 @@ public class VendorController {
         Product existingProduct = productRepository.findByNameAndBrand(product.getName(), product.getBrand());
 
         if (existingProduct == null) {
-            // Create new product
-            if (file != null && !file.isEmpty()) {
-                product.setImageUrl(imageService.uploadImage(file));
-            }
+                // Create new product
+                if (product.getImageUrl()==null && file != null && !file.isEmpty()) {
+                    product.setImageUrl(imageService.uploadImage(file));
+                }
             productRepository.save(product);
         } else {
+            existingProduct.setImageUrl(product.getImageUrl());
             product = existingProduct;
         }
-
+        
         // Create or update vendor product
         VendorProduct existingvendorProduct = vendorProductRepository.findByVendorAndProduct(vendor, product);
         if (existingvendorProduct == null) {
@@ -82,8 +83,8 @@ public class VendorController {
         existingvendorProduct.setAvailability(vendorProduct.getAvailability());
         vendorProductRepository.save(existingvendorProduct);
 
-        return ResponseEntity.ok("Product added/updated successfully");
-    }
+            return ResponseEntity.ok("Product added/updated successfully");
+        }
 
     // Delete vendor product
     @DeleteMapping("/deleteproduct/{id}")

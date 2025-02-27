@@ -19,23 +19,34 @@ const Account = () => {
   const [isOpen, setIsOpen] = useState(false);
   useEffect(() => {
 
-    fetch('http://localhost:8080/shoplex/customer/showwishlist', {
+    fetch(`${import.meta.env.VITE_REACT_APP_API_URL}/customer/showwishlist`, {
       method: 'GET', headers: {
         'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('token')}`
       }
     }).then(res => res.json())
       .then(data => { setwishlist(data) });
     setorders(user.orders)
-    console.log(user)
-    console.log(user.orders)
   }, [])
   const editProfile=(editForm)=>{
-     fetch('http://localhost:8080/shoplex/customer/updateProfile',{method:'POST',
+     fetch(`${import.meta.env.VITE_REACT_APP_API_URL}/customer/updateProfile`,{method:'POST',
      body:editForm,
      headers:{
        'Authorization': `Bearer ${localStorage.getItem('token')}`
      }})
-  }
+     .then(res=>{
+      if(res.status===401)
+        alert('Unauthorized')
+      else if(res.status===500)
+        alert('Internal Server Error')
+      else if(res.status===200){
+        alert('Profile Updated Successfully')
+        setIsOpen(false);
+        window.location.reload();
+      }
+      else
+        alert('Something went wrong')
+     })
+    }
   const editHandler = (e)=>{
         e.preventDefault();
         let form = e.target;
@@ -144,12 +155,14 @@ const Account = () => {
           </motion.div>
         </div>)}
       <div className='flex p-8 flex-col gap-6'>
-        <div className='flex justify-center items-center p-8 flex-col gap-6'>
+        <div className='flex justify-center items-center p-8 flex-col gap-6 m-3'>
           <div className='border rounded-full flex justify-center items-center w-64 h-64'>
             <img className='w-60 h-60 object-contain rounded-full' src={user?.profileImageUrl === null ? User : user?.profileImageUrl} alt="" />
           </div>
           <h1 className="text-5xl">{user.firstName} {user?.lastName}</h1>
           <h1 className='text-2xl'>{user?.email}</h1>
+          <h1 className='text-2xl flex justify-between w-1/4'><span>Address: </span><span>{user.address}</span></h1>
+          <h1 className='text-2xl flex justify-between w-1/4'><span>Phone Number: </span><span>{user.phoneNumber}</span></h1>
           <button onClick={() => setIsOpen(true)} className=' h-14 w-28 rounded-lg bg-white border border-black text-black text-xl'>Edit Profile</button>
         </div>
         <div>

@@ -15,7 +15,7 @@ const Home = () => {
     const { products } = useSelector((state)=>state.product)
     const [wishlist, setWishlist] = useState({});
     useEffect(() => {
-        fetch('http://localhost:8080/shoplex/home/products', { method: 'GET' })
+        fetch(`${import.meta.env.VITE_REACT_APP_API_URL}/home/products`, { method: 'GET' })
             .then(res => res.json())
             .then(json => {
                 const updatedProducts = json.map(product => {
@@ -28,7 +28,7 @@ const Home = () => {
 
     useEffect(() => {
         if (loggedIn) {
-          fetch('http://localhost:8080/shoplex/customer/showwishlist', {
+          fetch(`${import.meta.env.VITE_REACT_APP_API_URL}/customer/showwishlist`, {
             method: 'GET',
             headers: {
               'Content-Type': 'application/json',
@@ -46,10 +46,10 @@ const Home = () => {
         return wishlist.products?.some(item => item.id === productId);
       };
     return (
-        <div className='flex flex-col text-black relative font-mono '>
+        <div className='h-[93vh] flex flex-col text-black relative font-mono overflow-y-scroll'>
             <SideBar setProducts={setProducts}/>
             <div className="main flex justify-center items-center">
-                {products.length !== 0 ? <div className="products grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
+                {products.length !== 0 ? <div className="products grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 ">
                     {products.map((product) => {
                         const inwish = isProductInWishlist(product?.id)
                         return <Card product={product}

@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import com.shoplex.shopex_backend.Entities.Order;
+import com.shoplex.shopex_backend.Entities.User;
 
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
@@ -16,5 +17,6 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     
     @Query("SELECT o FROM orders o WHERE o.orderStatus = 'PROCESSING'")
     Optional<Order> findByOrderProcessing();
-
+    
+    List<Order> findByDeliveryAgent(User deliveryAgent);
 }

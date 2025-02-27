@@ -5,6 +5,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router'
 import Home from './Home'
 import Main from './vendor/Main'
 import MainDeli from './delivery/Main'
+import MainAdmin from './admin/Main'
 import Login from './vendor/LogIn'
 import SignIn from './vendor/SignIn'
 import Form from './components/Form'
@@ -25,8 +26,11 @@ const router = createBrowserRouter([
   {path:'vendor/login',element:<Login role="VENDOR"/>},
   {path:'vendor/signin',element:<SignIn role="VENDOR"/>},
   {path:'delivery/login',element:<LogIn role="DELIVERY_PERSONNEL"/>},
-  {path:'delivery/signin',element:<LogIn role="DELIVERY_PERSONNEL"/>},
+  {path:'delivery/signin',element:<SignIn role="DELIVERY_PERSONNEL"/>},
   {path:'delivery',element:<MainDeli/>},
+  {path:'admin',element:<MainAdmin/>},
+  {path:'admin/login',element:<LogIn role="ADMIN"/>},
+  {path:'admin/signin',element:<SignIn role="ADMIN"/>},
   {path:'vendor/addproduct',element:<Form/>},
   {path:'account',element:<Account/>},
   {path:'product/:pid',element:<Product/>},

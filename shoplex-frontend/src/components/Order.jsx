@@ -20,7 +20,7 @@ const Order = () => {
           let order = { orderItems, totalAmount: totalPrice }
           console.log(order)
         // Fetch order ID from backend
-        const response = await fetch('http://localhost:8080/shoplex/customer/placeOrder', {
+        const response = await fetch(`${import.meta.env.VITE_REACT_APP_API_URL}/customer/placeOrder`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

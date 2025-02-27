@@ -8,21 +8,23 @@ const LogIn = ({role}) => {
 
   async function logIn(data){
     if(role === 'ADMIN'){
-        fetch('http://localhost:8080/shoplex/auth/signin/admin', { method: 'POST',body: JSON.stringify(data) ,headers: { 'Content-Type': 'application/json'}})
+        fetch(`${import.meta.env.VITE_REACT_APP_API_URL}/auth/signin/admin`, { method: 'POST',body: JSON.stringify(data) ,headers: { 'Content-Type': 'application/json'}})
+        .then(r=>r.json())
         .then(res => {
+           console.log(res.token)
             if(res.error){
                 alert(res.error)
             }
             else{
               localStorage.setItem('token',res.token)
               dispatch(login({role:'ADMIN',user:res.user}))
-              navigate('/home')
+              navigate('/admin')
             }
             
         })
     }
     else{
-        const res = await fetch('http://localhost:8080/shoplex/auth/signin/user', { method: 'POST',body: JSON.stringify(data),headers: { 'Content-Type': 'application/json'}})
+        const res = await fetch(`${import.meta.env.VITE_REACT_APP_API_URL}/auth/signin/user`, { method: 'POST',body: JSON.stringify(data),headers: { 'Content-Type': 'application/json'}})
         const resp = await res.json()
           if(resp.error){
             alert(resp.error)
