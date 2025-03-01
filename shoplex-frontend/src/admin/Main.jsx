@@ -100,16 +100,25 @@ const Main = () => {
           {change==1 && <div>
             <DataTable value={customers} footer={footer} tableStyle={{ width: '100rem',backgroundColor: '#ffffff',borderRadius: '10px',fontSize: '20px' }} header={header}>
             <Column body={name} header="Name" style={{padding:'10px'}} headerStyle={{backgroundColor:'#d1d5dc',borderTopLeftRadius:'10px'}}></Column>
+            <Column field="email" header="Email" style={{padding:'10px'}} headerStyle={{backgroundColor:'#d1d5dc',borderTopLeftRadius:'10px'}}></Column>
+            <Column field="phoneNumber" header="Phone Number" style={{padding:'10px'}} headerStyle={{backgroundColor:'#d1d5dc',borderTopLeftRadius:'10px'}}></Column>
+            <Column field="address" header="Address" style={{padding:'10px'}} headerStyle={{backgroundColor:'#d1d5dc',borderTopLeftRadius:'10px'}}></Column>
             </DataTable>
           </div>}
           {change==2 && <div>
             <DataTable value={vendors} footer={footer} tableStyle={{ width: '100rem',backgroundColor: '#ffffff',borderRadius: '10px',fontSize: '20px' }} header={header}>
             <Column body={name} header="Name" style={{padding:'10px'}} headerStyle={{backgroundColor:'#d1d5dc',borderTopLeftRadius:'10px'}}></Column>
+            <Column field="email" header="Email" style={{padding:'10px'}} headerStyle={{backgroundColor:'#d1d5dc',borderTopLeftRadius:'10px'}}></Column>
+            <Column field="phoneNumber" header="Phone Number" style={{padding:'10px'}} headerStyle={{backgroundColor:'#d1d5dc',borderTopLeftRadius:'10px'}}></Column>
+            <Column field="address" header="Address" style={{padding:'10px'}} headerStyle={{backgroundColor:'#d1d5dc',borderTopLeftRadius:'10px'}}></Column>
             </DataTable>
           </div>}
           {change==3 && <div>
             <DataTable value={deliveryagents} footer={footer} tableStyle={{ width: '100rem',backgroundColor: '#ffffff',borderRadius: '10px',fontSize: '20px' }} header={header}>
             <Column body={name} header="Name" style={{padding:'10px'}} headerStyle={{backgroundColor:'#d1d5dc',borderTopLeftRadius:'10px'}}></Column>
+            <Column field="email" header="Email" style={{padding:'10px'}} headerStyle={{backgroundColor:'#d1d5dc',borderTopLeftRadius:'10px'}}></Column>
+            <Column field="phoneNumber" header="Phone Number" style={{padding:'10px'}} headerStyle={{backgroundColor:'#d1d5dc',borderTopLeftRadius:'10px'}}></Column>
+            <Column field="address" header="Address" style={{padding:'10px'}} headerStyle={{backgroundColor:'#d1d5dc',borderTopLeftRadius:'10px'}}></Column>
             </DataTable>
           </div>}
         </div>

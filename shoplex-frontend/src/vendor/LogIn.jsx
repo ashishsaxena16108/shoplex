@@ -2,6 +2,7 @@ import React from 'react'
 import { Link,useNavigate } from 'react-router'
 import { useDispatch,useSelector } from 'react-redux';
 import { login, logout } from '../feature/auth/authSlice';
+import { toast,Bounce } from 'react-toastify';
 const LogIn = ({role}) => {
   const navigate = useNavigate();
   const dispatch = useDispatch()
@@ -27,7 +28,17 @@ const LogIn = ({role}) => {
         const res = await fetch(`${import.meta.env.VITE_REACT_APP_API_URL}/auth/signin/user`, { method: 'POST',body: JSON.stringify(data),headers: { 'Content-Type': 'application/json'}})
         const resp = await res.json()
           if(resp.error){
-            alert(resp.error)
+            toast.error(resp.error,{
+              position: "top-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: false,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+      transition: Bounce,
+            })
           }
           else{
           localStorage.setItem('token',resp.token)

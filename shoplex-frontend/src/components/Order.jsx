@@ -1,9 +1,12 @@
 import React from 'react'
 import { useSelector,useDispatch } from 'react-redux'
 import { setCart } from '../feature/cart/cartSlice'
+import { useNavigate } from 'react-router'
+import { toast,Bounce } from 'react-toastify'
 
 const Order = () => {
  const dispatch = useDispatch()
+ const navigate = useNavigate()
  const { cart } = useSelector((state)=>state.cart)
  const { user } = useSelector((state)=>state.auth)
  const totalItems = cart?.items.reduce((acc, item) => acc + item.quantity, 0);
@@ -40,7 +43,17 @@ const Order = () => {
           description: 'Order Payment',
           order_id: paymentId,
           handler: function (response) {
-            alert(`Payment successful! Payment ID: ${response.razorpay_payment_id}`)
+            toast.success(`Payment successful! Payment ID: ${response.razorpay_payment_id}`,{position: "top-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: false,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+      transition: Bounce}
+    )
+            navigate('/')
             // Handle post-payment actions here
           },
           prefill: {

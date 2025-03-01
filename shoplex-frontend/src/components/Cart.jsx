@@ -17,6 +17,7 @@ const Cart = ({ open, setopen }) => {
     const totalPrice = cart?.items?.reduce((acc, item) => acc + item.vendorProduct.price * item.quantity, 0) || 0
     const handleOrderBtn = () => {
          if(loggedIn){
+            setCart({items:[]})
             navigate('/order')
          }
          else{

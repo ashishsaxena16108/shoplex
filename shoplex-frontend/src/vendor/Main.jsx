@@ -5,6 +5,7 @@ import { Column } from 'primereact/column';
 import { Link,useNavigate } from 'react-router';
 import { useSelector } from 'react-redux';
 import { button, div, nav } from 'framer-motion/client';
+import { Bounce } from 'react-toastify';
 const Main = () => {
   const { loggedIn } = useSelector((state)=>state.auth)
   const navigate = useNavigate()
@@ -47,9 +48,41 @@ const Main = () => {
   const handleDelete = (product) =>{
     confirm('Are you sure you want to delete this product?') && 
     fetch(`${import.meta.env.VITE_REACT_APP_API_URL}/vendor/deleteproduct?productId=${product.productId}`,{method:'POST',headers: { 'Content-Type': 'application/json','Authorization': `Bearer ${localStorage.getItem('token')}`}})
-    .then(res=>res.json())
-    .then(data=>console.log(data))
-  }
+    .then(res => {
+      if (res.status === 400) {
+        return res.text().then(text => { throw new Error(text) })
+      }
+      return res.text()
+    })
+    .then(data => {
+      toast.success(data, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition:Bounce
+      })
+      getProducts()
+    })
+    .catch(error => {
+      toast.error(error, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition:Bounce
+      })
+    })
+}
+  
   const deleteProduct = (product) =>{
     return <button className=' bg-red-600 rounded-lg p-2 text-white w-20 cursor-pointer hover:scale-110' onClick={()=>{handleDelete(product)}}>Delete</button>
   }
