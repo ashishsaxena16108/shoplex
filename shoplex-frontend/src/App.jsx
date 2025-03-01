@@ -88,7 +88,7 @@ const App = ({ }) => {
   return (
     <div>
       <Nav frole={role} />
-      <ToastContainer />
+      <ToastContainer className=' scale-125 mr-8' />
       <Outlet />
     </div>
   )

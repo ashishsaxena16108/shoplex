@@ -1,4 +1,5 @@
 import React,{ useEffect, useState } from 'react'
+import User from '../assets/user.svg'
 import { useSelector,useDispatch } from 'react-redux'
 import { DataTable } from 'primereact/datatable'
 import { Column } from 'primereact/column'
@@ -13,9 +14,6 @@ const Main = () => {
   const [vendors, setVendors] = useState([])
   const [orders, setOrders] = useState([])
   const [deliveryagents, setDeliveryagents] = useState([])
-  useEffect(() => {
-      dispatch(setRole('ADMIN'))
-  }, [])
   const getProducts = async () => {
      fetch(`${import.meta.env.VITE_REACT_APP_API_URL}/home/products`, { method: 'GET',headers: { 'Content-Type': 'application/json'}})
      .then(res => res.json())
@@ -57,14 +55,14 @@ const Main = () => {
     return <img src={product?.imageUrl} width={180} alt="product" />
   }
   const availability = (availability) =>{
-      return availability ? <div className='bg-green-500 rounded-lg text-white w-20 text-center'>In Stock</div> : <div className='w-20 bg-red-500 rounded-lg text-white text-center'>Out Of Stock</div>
+      return availability ? <div className='bg-green-500 rounded-lg text-white w-20 text-center p-0.5'>In Stock</div> : <div className='w-20 bg-red-500 rounded-lg text-white text-center'>Out Of Stock</div>
     }
     const header = (
         <div className="flex flex-wrap align-items-center justify-content-between gap-2 bg-gray-400">
         </div>
     );
     const name = (customer) =>{
-        return <div>{customer.firstName} {customer.lastName}</div>
+        return <div className='flex gap-2 items-center'><img className='w-14 h-14 rounded-full' src={customer.profileImageUrl?customer.profileImageUrl:User}/>{customer.firstName} {customer.lastName}</div>
     }
     const footer = ()=>{
       let length=0;
@@ -74,7 +72,7 @@ const Main = () => {
       if(change==3) length = deliveryagents.length;
       if(change==4) length = orders.length;
       return (<div className=' text-2xl m-3 font-bold'>{`In total there are ${length}`} {heads[change].toLocaleLowerCase()}.</div>);
-      const orderFooter = (<div className=' text-2xl m-3 font-bold'>{`In total there are ${orders ? orders.length : 0} orders.`}</div>)};
+    }
   return (
     loggedIn ?
     <div className='flex flex-col'>
@@ -83,6 +81,7 @@ const Main = () => {
         <h1 className={`cursor-pointer p-4 rounded-lg ${change==1?' text-gray-600':'bg-gradient-to-r from-green-500 via-blue-400 to-cyan-400 text-white'}`} onClick={()=>setchange(1)}>{heads[1]}</h1>
         <h1 className={`cursor-pointer p-4 rounded-lg ${change==2?' text-gray-600':'bg-gradient-to-r from-green-500 via-blue-400 to-cyan-400 text-white'}`} onClick={()=>setchange(2)}>{heads[2]}</h1>
         <h1 className={`cursor-pointer p-4 rounded-lg ${change==3?' text-gray-600':'bg-gradient-to-r from-green-500 via-blue-400 to-cyan-400 text-white'}`} onClick={()=>setchange(3)}>{heads[3]}</h1>
+        <h1 className={`cursor-pointer p-4 rounded-lg ${change==4?' text-gray-600':'bg-gradient-to-r from-green-500 via-blue-400 to-cyan-400 text-white'}`} onClick={()=>setchange(4)}>{heads[4]}</h1>
         </div>
         <div className='flex justify-center items-center'>
           {change==0 && <div>
@@ -100,25 +99,33 @@ const Main = () => {
           {change==1 && <div>
             <DataTable value={customers} footer={footer} tableStyle={{ width: '100rem',backgroundColor: '#ffffff',borderRadius: '10px',fontSize: '20px' }} header={header}>
             <Column body={name} header="Name" style={{padding:'10px'}} headerStyle={{backgroundColor:'#d1d5dc',borderTopLeftRadius:'10px'}}></Column>
-            <Column field="email" header="Email" style={{padding:'10px'}} headerStyle={{backgroundColor:'#d1d5dc',borderTopLeftRadius:'10px'}}></Column>
-            <Column field="phoneNumber" header="Phone Number" style={{padding:'10px'}} headerStyle={{backgroundColor:'#d1d5dc',borderTopLeftRadius:'10px'}}></Column>
-            <Column field="address" header="Address" style={{padding:'10px'}} headerStyle={{backgroundColor:'#d1d5dc',borderTopLeftRadius:'10px'}}></Column>
+            <Column field="email" header="Email" style={{padding:'10px'}} headerStyle={{backgroundColor:'#d1d5dc'}}></Column>
+            <Column field="phoneNumber" header="Phone Number" style={{padding:'10px'}} headerStyle={{backgroundColor:'#d1d5dc'}}></Column>
+            <Column field="address" header="Address" style={{padding:'10px'}} headerStyle={{backgroundColor:'#d1d5dc',borderTopRightRadius:'10px'}}></Column>
             </DataTable>
           </div>}
           {change==2 && <div>
             <DataTable value={vendors} footer={footer} tableStyle={{ width: '100rem',backgroundColor: '#ffffff',borderRadius: '10px',fontSize: '20px' }} header={header}>
             <Column body={name} header="Name" style={{padding:'10px'}} headerStyle={{backgroundColor:'#d1d5dc',borderTopLeftRadius:'10px'}}></Column>
-            <Column field="email" header="Email" style={{padding:'10px'}} headerStyle={{backgroundColor:'#d1d5dc',borderTopLeftRadius:'10px'}}></Column>
-            <Column field="phoneNumber" header="Phone Number" style={{padding:'10px'}} headerStyle={{backgroundColor:'#d1d5dc',borderTopLeftRadius:'10px'}}></Column>
-            <Column field="address" header="Address" style={{padding:'10px'}} headerStyle={{backgroundColor:'#d1d5dc',borderTopLeftRadius:'10px'}}></Column>
+            <Column field="email" header="Email" style={{padding:'10px'}} headerStyle={{backgroundColor:'#d1d5dc'}}></Column>
+            <Column field="phoneNumber" header="Phone Number" style={{padding:'10px'}} headerStyle={{backgroundColor:'#d1d5dc'}}></Column>
+            <Column field="address" header="Address" style={{padding:'10px'}} headerStyle={{backgroundColor:'#d1d5dc',borderTopRightRadius:'10px'}}></Column>
             </DataTable>
           </div>}
           {change==3 && <div>
             <DataTable value={deliveryagents} footer={footer} tableStyle={{ width: '100rem',backgroundColor: '#ffffff',borderRadius: '10px',fontSize: '20px' }} header={header}>
             <Column body={name} header="Name" style={{padding:'10px'}} headerStyle={{backgroundColor:'#d1d5dc',borderTopLeftRadius:'10px'}}></Column>
-            <Column field="email" header="Email" style={{padding:'10px'}} headerStyle={{backgroundColor:'#d1d5dc',borderTopLeftRadius:'10px'}}></Column>
-            <Column field="phoneNumber" header="Phone Number" style={{padding:'10px'}} headerStyle={{backgroundColor:'#d1d5dc',borderTopLeftRadius:'10px'}}></Column>
-            <Column field="address" header="Address" style={{padding:'10px'}} headerStyle={{backgroundColor:'#d1d5dc',borderTopLeftRadius:'10px'}}></Column>
+            <Column field="email" header="Email" style={{padding:'10px'}} headerStyle={{backgroundColor:'#d1d5dc'}}></Column>
+            <Column field="phoneNumber" header="Phone Number" style={{padding:'10px'}} headerStyle={{backgroundColor:'#d1d5dc'}}></Column>
+            <Column field="address" header="Address" style={{padding:'10px'}} headerStyle={{backgroundColor:'#d1d5dc',borderTopRightRadius:'10px'}}></Column>
+            </DataTable>
+          </div>}
+          {change==4 && <div>
+            <DataTable value={orders} footer={footer} tableStyle={{ width: '100rem',backgroundColor: '#ffffff',borderRadius: '10px',fontSize: '20px' }} header={header}>
+            <Column field='id' header="Order ID" style={{padding:'10px'}} headerStyle={{backgroundColor:'#d1d5dc',borderTopLeftRadius:'10px'}}></Column>
+            <Column field="totalAmount" header="Total Amount" style={{padding:'10px'}} headerStyle={{backgroundColor:'#d1d5dc'}}></Column>
+            <Column field="orderStatus" header="Order Status" style={{padding:'10px'}} headerStyle={{backgroundColor:'#d1d5dc'}}></Column>
+            <Column field="createdAt" header="Placed At" style={{padding:'10px'}} headerStyle={{backgroundColor:'#d1d5dc'}}></Column>
             </DataTable>
           </div>}
         </div>

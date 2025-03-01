@@ -33,7 +33,7 @@ const Nav = ({frole}) => {
   return (
     <nav>
     <div className='flex justify-between items-center h-[65px] bg-gradient-to-r from-cyan-950 via-indigo-950 to-emerald-950 relative shadow-sm font-mono text-3xl text-white'>
-      <h1 className='mx-4 flex gap-6'><button onClick={handleBtn}><img id='img' src={Bars}/></button><span>Shoplex {role==='VENDOR'?'Business':''}</span></h1>
+      <h1 className='mx-4 flex gap-6'><button onClick={handleBtn}><img id='img' src={Bars}/></button><Link to='/'><span>Shoplex {role==='VENDOR'?'Business':''}</span></Link></h1>
       {
         (!loggedIn ?     
         <ul className='flex flex-row text-2xl gap-4 m-2'>

@@ -3,10 +3,10 @@ import { Link,useNavigate } from 'react-router'
 import { useDispatch,useSelector } from 'react-redux';
 import { login, logout } from '../feature/auth/authSlice';
 import { toast,Bounce } from 'react-toastify';
-const LogIn = ({role}) => {
+const LogIn = ({}) => {
   const navigate = useNavigate();
   const dispatch = useDispatch()
-
+  const { role } = useSelector((state)=>state.auth)
   async function logIn(data){
     if(role === 'ADMIN'){
         fetch(`${import.meta.env.VITE_REACT_APP_API_URL}/auth/signin/admin`, { method: 'POST',body: JSON.stringify(data) ,headers: { 'Content-Type': 'application/json'}})
